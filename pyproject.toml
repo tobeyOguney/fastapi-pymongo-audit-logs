@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "audit_log_service"
+version = "0.1.0"
+description = "Accepts event data sent by other systems and provides an HTTP endpoint for querying recorded data by field values."
+authors = ["Oladapo Joseph <oladapo_joseph@yahoo.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = {extras = ["uvicorn"], version = "^0.78.0"}
+passlib = "^1.7.4"
+celery = {extras = ["redis"], version = "^5.2.7"}
+uvicorn = "^0.17.6"
+pymongo = "^4.1.1"
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+python-multipart = "^0.0.5"
+bcrypt = "^3.2.2"
+
+[tool.poetry.dev-dependencies]
+mypy = "^0.960"
+pytest = "^7.1.2"
+isort = "^5.10.1"
+black = "^22.3.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

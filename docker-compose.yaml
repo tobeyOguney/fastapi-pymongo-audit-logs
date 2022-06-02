@@ -1,0 +1,51 @@
+version: "3.3"
+services:
+  service:
+    build:
+      context: .
+    image: audit-log-service
+    container_name: audit-log-service
+    ports:
+      - "5000:5000"
+    environment:
+      MONGODB_URL: mongodb://mongodb:27017/
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+    command: poetry run uvicorn --host 0.0.0.0 --port 5000 service.main:app
+    depends_on:
+      - audit-log-service-worker
+      - mongodb
+    networks:
+      - internal-net
+
+  audit-log-service-worker:
+    build:
+      context: .
+    image: audit-log-service-worker
+    container_name: audit-log-worker
+    environment:
+      MONGODB_URL: mongodb://mongodb:27017/
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+    command: poetry run celery --app=service.worker.celery worker --loglevel=info
+    depends_on:
+      - redis
+      - mongodb
+    networks:
+      - internal-net
+
+  redis:
+    image: redis:6-alpine
+    container_name: audit-log-service-redis
+    networks:
+      - internal-net
+
+  mongodb:
+    image: mongo
+    container_name: audit-log-service-mongodb
+    networks:
+      - internal-net
+
+networks:
+  internal-net:
+    driver: bridge
